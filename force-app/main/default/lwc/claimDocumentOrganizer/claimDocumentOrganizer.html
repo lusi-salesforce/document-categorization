@@ -1,0 +1,303 @@
+<template>
+    <div class="slds-container_medium slds-container_center slds-var-p-around_medium">
+        <lightning-card title="Documents for your claim" icon-name="standard:case">
+            <div slot="actions">
+                <lightning-badge label="Motor claim"></lightning-badge>
+            </div>
+
+            <div class="slds-var-p-horizontal_medium slds-var-p-bottom_medium">
+                <p class="slds-text-body_regular">
+                    Based on the answers you provided, here’s what we need to assess your claim.
+                </p>
+            </div>
+        </lightning-card>
+
+        <div class="slds-var-m-top_medium">
+            <lightning-card title="Based on your answers" icon-name="utility:choice">
+                <div class="slds-var-p-horizontal_medium slds-var-p-bottom_medium">
+                    <p class="slds-text-body_small slds-text-color_weak slds-var-m-bottom_large">
+                        This claim setup determines the document list shown below.
+                    </p>
+
+                    <lightning-tile label="Minor collision involving two cars" type="media">
+                        <lightning-icon
+                            slot="media"
+                            icon-name="utility:check"
+                            size="x-small"
+                            alternative-text="Selected"
+                        ></lightning-icon>
+                        <p>What happened?</p>
+                    </lightning-tile>
+
+                    <div class="slds-var-m-top_large">
+                        <lightning-tile label="Damage to my privately owned car" type="media">
+                            <lightning-icon
+                                slot="media"
+                                icon-name="utility:check"
+                                size="x-small"
+                                alternative-text="Selected"
+                            ></lightning-icon>
+                            <p>What are you claiming for?</p>
+                        </lightning-tile>
+                    </div>
+
+                    <div class="slds-var-m-top_large">
+                        <lightning-tile label="The other driver accepted responsibility" type="media">
+                            <lightning-icon
+                                slot="media"
+                                icon-name="utility:check"
+                                size="x-small"
+                                alternative-text="Selected"
+                            ></lightning-icon>
+                            <p>Who was responsible?</p>
+                        </lightning-tile>
+                    </div>
+
+                    <div class="slds-var-m-top_large">
+                        <lightning-tile label="Nobody was injured" type="media">
+                            <lightning-icon
+                                slot="media"
+                                icon-name="utility:check"
+                                size="x-small"
+                                alternative-text="Selected"
+                            ></lightning-icon>
+                            <p>Was anyone injured?</p>
+                        </lightning-tile>
+                    </div>
+
+                    <div class="slds-var-m-top_large">
+                        <lightning-tile label="The police were not called" type="media">
+                            <lightning-icon
+                                slot="media"
+                                icon-name="utility:check"
+                                size="x-small"
+                                alternative-text="Selected"
+                            ></lightning-icon>
+                            <p>Were the police called?</p>
+                        </lightning-tile>
+                    </div>
+
+                    <div class="slds-var-m-top_large">
+                        <lightning-tile label="Other driver’s OC insurance" type="media">
+                            <lightning-icon
+                                slot="media"
+                                icon-name="utility:check"
+                                size="x-small"
+                                alternative-text="Selected"
+                            ></lightning-icon>
+                            <p>Which policy covers the claim?</p>
+                        </lightning-tile>
+                    </div>
+                </div>
+            </lightning-card>
+        </div>
+
+        <div class="slds-var-m-top_medium">
+            <lightning-card title="Documents we need" icon-name="utility:checklist">
+                <div slot="actions">
+                    <lightning-badge label="3 types"></lightning-badge>
+                </div>
+
+                <div class="slds-var-p-horizontal_medium slds-var-p-bottom_medium">
+                    <lightning-tile label="Accident statement" type="media">
+                        <lightning-icon
+                            slot="media"
+                            icon-name="utility:contract_doc"
+                            size="small"
+                            alternative-text="Accident statement"
+                        ></lightning-icon>
+                        <p>Agreed and signed by both drivers</p>
+                    </lightning-tile>
+
+                    <div class="slds-var-m-top_large">
+                        <lightning-tile label="Vehicle registration certificate" type="media">
+                            <lightning-icon
+                                slot="media"
+                                icon-name="utility:identity"
+                                size="small"
+                                alternative-text="Vehicle registration certificate"
+                            ></lightning-icon>
+                            <p>For the damaged vehicle</p>
+                        </lightning-tile>
+                    </div>
+
+                    <div class="slds-var-m-top_large">
+                        <lightning-tile label="Damage photos" type="media">
+                            <lightning-icon
+                                slot="media"
+                                icon-name="utility:image"
+                                size="small"
+                                alternative-text="Damage photos"
+                            ></lightning-icon>
+                            <p>Show the vehicle and affected areas</p>
+                        </lightning-tile>
+                    </div>
+
+                    <div class="slds-var-m-top_xx-large slds-var-p-top_large slds-border_top" aria-live="polite">
+                    <template lwc:if={isEmptyState}>
+                        <p class="slds-text-body_regular slds-var-m-bottom_medium">
+                            Add everything at once. We’ll sort it for you, and you can correct anything before sending.
+                        </p>
+
+                        <lightning-input
+                            type="file"
+                            label="Add documents and photos"
+                            accept=".pdf,.jpg,.jpeg,.png,.heic"
+                            multiple
+                            onchange={handleFilesSelected}
+                        ></lightning-input>
+
+                        <p class="slds-text-body_small slds-text-color_weak slds-var-m-top_small">
+                            PDF, JPG, PNG or HEIC · up to 10 MB each
+                        </p>
+                    </template>
+
+                    <template lwc:elseif={isProcessing}>
+                        <div class="slds-is-relative slds-var-p-vertical_xx-large">
+                            <lightning-spinner
+                                alternative-text="Sorting documents"
+                                size="medium"
+                            ></lightning-spinner>
+                            <div class="slds-text-align_center slds-var-p-top_xx-large">
+                                <h2 class="slds-text-heading_medium">Sorting your documents…</h2>
+                                <p class="slds-var-m-top_small slds-var-m-bottom_large">
+                                    We’re suggesting the best category for each one.
+                                </p>
+                                <lightning-progress-bar
+                                    value="50"
+                                    size="large"
+                                    aria-label="Sorting documents"
+                                ></lightning-progress-bar>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template lwc:else>
+                        <lightning-tile label="Check the suggested categories" type="media">
+                            <lightning-icon
+                                slot="media"
+                                icon-name="utility:success"
+                                size="small"
+                                alternative-text="Documents organized"
+                            ></lightning-icon>
+                            <p>Change anything that doesn’t look right before sending.</p>
+                        </lightning-tile>
+
+                        <template lwc:if={showSubmissionConfirmation}>
+                            <div class="slds-var-m-top_medium">
+                                <lightning-card title="Ready for claims review" icon-name="utility:success">
+                                    <lightning-button-icon
+                                        slot="actions"
+                                        icon-name="utility:close"
+                                        alternative-text="Dismiss"
+                                        title="Dismiss"
+                                        onclick={dismissConfirmation}
+                                    ></lightning-button-icon>
+                                    <div class="slds-var-p-horizontal_medium slds-var-p-bottom_small">
+                                        <lightning-formatted-text
+                                            value="Nothing was actually sent—this is a preview."
+                                        ></lightning-formatted-text>
+                                    </div>
+                                </lightning-card>
+                            </div>
+                        </template>
+
+                        <div class="slds-var-m-top_medium">
+                            <template for:each={displayFiles} for:item="file">
+                                <div key={file.id} class="slds-var-m-bottom_small">
+                                    <lightning-card title={file.name} icon-name={file.iconName}>
+                                        <lightning-button-icon
+                                            slot="actions"
+                                            icon-name="utility:delete"
+                                            alternative-text="Remove document"
+                                            title="Remove document"
+                                            data-id={file.id}
+                                            onclick={handleRemove}
+                                        ></lightning-button-icon>
+
+                                        <div class="slds-var-p-horizontal_medium slds-var-p-bottom_medium">
+                                            <lightning-badge label={file.fileDetailLabel}></lightning-badge>
+
+                                            <p class="slds-text-title_caps slds-var-m-top_medium">
+                                                {file.categoryLabel}
+                                            </p>
+                                            <p class="slds-text-heading_small slds-var-m-top_xx-small">
+                                                {file.category}
+                                            </p>
+
+                                            <template lwc:if={file.needsReview}>
+                                                <div class="slds-var-m-top_small">
+                                                    <lightning-badge label="Please check"></lightning-badge>
+                                                    <lightning-helptext
+                                                        content="We’re not fully sure—please confirm or change this suggested category."
+                                                    ></lightning-helptext>
+                                                </div>
+                                            </template>
+
+                                            <div class="slds-var-m-top_medium">
+                                                <template lwc:if={file.isEditing}>
+                                                    <lightning-combobox
+                                                        label="Choose category"
+                                                        value={file.category}
+                                                        options={file.categoryOptions}
+                                                        data-id={file.id}
+                                                        onchange={handleCategoryChange}
+                                                    ></lightning-combobox>
+                                                </template>
+                                                <template lwc:else>
+                                                    <lightning-button
+                                                        label="Change category"
+                                                        variant="base"
+                                                        data-id={file.id}
+                                                        onclick={handleEditCategory}
+                                                    ></lightning-button>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </lightning-card>
+                                </div>
+                            </template>
+                        </div>
+
+                        <div class="slds-var-m-top_large">
+                            <lightning-input
+                                type="file"
+                                label="Add more documents or photos"
+                                accept=".pdf,.jpg,.jpeg,.png,.heic"
+                                multiple
+                                onchange={handleFilesSelected}
+                            ></lightning-input>
+                        </div>
+
+                        <div class="slds-var-m-top_large">
+                            <lightning-badge label={fileCountLabel}></lightning-badge>
+                        </div>
+
+                        <div class="slds-var-m-top_small">
+                            <lightning-button
+                                label="Send for review"
+                                variant="brand"
+                                icon-name="utility:forward"
+                                icon-position="right"
+                                onclick={handleSubmit}
+                            ></lightning-button>
+                        </div>
+
+                        <div class="slds-var-m-top_large">
+                            <lightning-icon
+                                icon-name="utility:info"
+                                size="x-small"
+                                alternative-text="Information"
+                            ></lightning-icon>
+                            <lightning-formatted-text
+                                class="slds-var-m-left_x-small"
+                                value="Categories are suggestions only. A claims specialist makes the final assessment."
+                            ></lightning-formatted-text>
+                        </div>
+                    </template>
+                    </div>
+                </div>
+            </lightning-card>
+        </div>
+    </div>
+</template>
