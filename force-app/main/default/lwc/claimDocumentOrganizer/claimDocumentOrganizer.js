@@ -1,15 +1,42 @@
 import { LightningElement } from 'lwc';
+import claimIllustration from '@salesforce/resourceUrl/illustrationInsuranceClaim';
 
+const ACCEPTED_FILE_TYPES = '.pdf,.jpg,.jpeg,.png,.heic';
 const CATEGORY_OPTIONS = [
     'Accident statement',
     'Vehicle registration certificate',
     'Damage photo',
     'Other'
+].map((category) => ({ label: category, value: category }));
+const REQUIRED_DOCUMENTS = [
+    {
+        id: 'accident-statement',
+        iconName: 'utility:contract_doc',
+        iconAlternativeText: 'Accident statement',
+        label: 'Your accident statement, signed by you and the other driver'
+    },
+    {
+        id: 'vehicle-registration-certificate',
+        iconName: 'utility:identity',
+        iconAlternativeText: 'Vehicle registration certificate',
+        label: 'Your vehicle’s registration certificate'
+    },
+    {
+        id: 'damage-photos',
+        iconName: 'utility:image',
+        iconAlternativeText: 'Damage photos',
+        label: 'Photos of your vehicle showing the damaged areas'
+    }
 ];
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const PROCESSING_DELAY = 1200;
 
 export default class ClaimDocumentOrganizer extends LightningElement {
+    claimIllustrationUrl = claimIllustration;
+    acceptedFileTypes = ACCEPTED_FILE_TYPES;
+    categoryOptions = CATEGORY_OPTIONS;
+    requiredDocuments = REQUIRED_DOCUMENTS;
     files = [];
     isProcessing = false;
     showSubmissionConfirmation = false;
@@ -24,11 +51,7 @@ export default class ClaimDocumentOrganizer extends LightningElement {
         return this.files.map((file) => ({
             ...file,
             categoryLabel: file.customerChanged ? 'Selected category' : 'Suggested category',
-            fileDetailLabel: `${file.extension} · ${file.sizeLabel}`,
-            categoryOptions: CATEGORY_OPTIONS.map((category) => ({
-                label: category,
-                value: category
-            }))
+            fileDetailLabel: `${file.extension} · ${file.sizeLabel}`
         }));
     }
 
@@ -60,7 +83,8 @@ export default class ClaimDocumentOrganizer extends LightningElement {
         this.processingTimer = window.setTimeout(() => {
             this.files = [...this.files, ...preparedFiles];
             this.isProcessing = false;
-        }, 1200);
+            this.processingTimer = undefined;
+        }, PROCESSING_DELAY);
     }
 
     prepareFile(file) {
@@ -72,15 +96,11 @@ export default class ClaimDocumentOrganizer extends LightningElement {
             name: file.name,
             sizeLabel: this.formatFileSize(file.size),
             extension,
-            typeLabel: file.type || `${extension} file`,
-            kind: classification.kind,
             iconName: classification.iconName,
             category: classification.category,
-            isConfident: classification.isConfident,
             needsReview: !classification.isConfident,
             customerChanged: false,
-            isEditing: false,
-            originalFile: file
+            isEditing: false
         };
     }
 
@@ -92,7 +112,6 @@ export default class ClaimDocumentOrganizer extends LightningElement {
             return {
                 category: 'Vehicle registration certificate',
                 isConfident: true,
-                kind: 'registration',
                 iconName: 'doctype:pdf'
             };
         }
@@ -101,7 +120,6 @@ export default class ClaimDocumentOrganizer extends LightningElement {
             return {
                 category: 'Accident statement',
                 isConfident: true,
-                kind: 'statement',
                 iconName: isImage ? 'doctype:image' : 'doctype:pdf'
             };
         }
@@ -110,7 +128,6 @@ export default class ClaimDocumentOrganizer extends LightningElement {
             return {
                 category: 'Damage photo',
                 isConfident: true,
-                kind: 'photo',
                 iconName: 'doctype:image'
             };
         }
@@ -118,17 +135,15 @@ export default class ClaimDocumentOrganizer extends LightningElement {
         return {
             category: 'Accident statement',
             isConfident: false,
-            kind: 'unknown',
             iconName: 'doctype:pdf'
         };
     }
 
     handleEditCategory(event) {
         const fileId = event.currentTarget.dataset.id;
-        this.files = this.files.map((file) => ({
-            ...file,
-            isEditing: file.id === fileId ? true : file.isEditing
-        }));
+        this.files = this.files.map((file) =>
+            file.id === fileId ? { ...file, isEditing: true } : file
+        );
     }
 
     handleCategoryChange(event) {
@@ -144,7 +159,6 @@ export default class ClaimDocumentOrganizer extends LightningElement {
                 ...file,
                 category,
                 customerChanged: true,
-                isConfident: true,
                 needsReview: false,
                 isEditing: false
             };
