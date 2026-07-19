@@ -1,31 +1,28 @@
-import { LightningElement } from 'lwc';
+import {LightningElement} from 'lwc';
 import claimIllustration from '@salesforce/resourceUrl/illustrationInsuranceClaim';
 
 const ACCEPTED_FILE_TYPES = '.pdf,.jpg,.jpeg,.png,.heic';
-const CATEGORY_OPTIONS = [
-    'Accident statement',
-    'Vehicle registration certificate',
-    'Damage photo',
-    'Other'
-].map((category) => ({ label: category, value: category }));
 const REQUIRED_DOCUMENTS = [
     {
         id: 'accident-statement',
         iconName: 'utility:contract_doc',
-        iconAlternativeText: 'Accident statement',
-        label: 'Your accident statement, signed by you and the other driver'
+        label: 'Accident statement',
+        titleForCustomer: 'Your accident statement, signed by you and the other driver',
+        description: 'A jointly completed road accident statement (e.g. the standardized European Accident Statement form): two-column layout for vehicle A and vehicle B, driver and insurer details, tick-box accident circumstances, a sketch of the collision, and signatures of both drivers. Distinguish from a police report, which is issued by police and bears a case number and official stamps rather than two drivers\' signatures.'
     },
     {
         id: 'vehicle-registration-certificate',
         iconName: 'utility:identity',
-        iconAlternativeText: 'Vehicle registration certificate',
-        label: 'Your vehicle’s registration certificate'
+        label: 'Vehicle registration certificate',
+        titleForCustomer: 'Your vehicle’s registration certificate',
+        description: 'An official government-issued vehicle registration document: registration (plate) number, VIN, owner or holder details, vehicle make and technical data, issuing authority, official seals or security features. Typically a small card or standardized form, not a letter, invoice, or insurance policy.'
     },
     {
         id: 'damage-photos',
         iconName: 'utility:image',
-        iconAlternativeText: 'Damage photos',
-        label: 'Photos of your vehicle showing the damaged areas'
+        label: 'Damage photos',
+        titleForCustomer: 'Photos of your vehicle showing the damaged areas',
+        description: 'A photograph of a vehicle showing visible damage such as dents, scratches, broken lights, or deformed body panels. Contains little or no text. A photograph or scan of a paper document is NOT this category, even if the photo quality is poor — classify it by the document it depicts.'
     }
 ];
 
@@ -35,7 +32,6 @@ const PROCESSING_DELAY = 1200;
 export default class ClaimDocumentOrganizer extends LightningElement {
     claimIllustrationUrl = claimIllustration;
     acceptedFileTypes = ACCEPTED_FILE_TYPES;
-    categoryOptions = CATEGORY_OPTIONS;
     requiredDocuments = REQUIRED_DOCUMENTS;
     files = [];
     isProcessing = false;
@@ -45,6 +41,10 @@ export default class ClaimDocumentOrganizer extends LightningElement {
 
     get isEmptyState() {
         return !this.isProcessing && this.files.length === 0;
+    }
+
+    get categoryOptions() {
+        return REQUIRED_DOCUMENTS.map(({label}) => ({label, value: label}));
     }
 
     get displayFiles() {
@@ -126,7 +126,7 @@ export default class ClaimDocumentOrganizer extends LightningElement {
 
         if (isImage) {
             return {
-                category: 'Damage photo',
+                category: 'Damage photos',
                 isConfident: true,
                 iconName: 'doctype:image'
             };
@@ -142,7 +142,7 @@ export default class ClaimDocumentOrganizer extends LightningElement {
     handleEditCategory(event) {
         const fileId = event.currentTarget.dataset.id;
         this.files = this.files.map((file) =>
-            file.id === fileId ? { ...file, isEditing: true } : file
+            file.id === fileId ? {...file, isEditing: true} : file
         );
     }
 
