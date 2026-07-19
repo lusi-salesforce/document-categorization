@@ -1,0 +1,59 @@
+{
+  "lightning:supportsPersonalization" : true,
+  "description" : "",
+  "lightning:type" : "lightning__objectType",
+  "title" : "insuranceClaimDocumentClassificationOutput",
+  "required" : [ "categoryFound", "categoryKey", "categoryLabel", "confidenceScore", "ambiguous", "documentReadable", "containsMultipleDocuments", "detectedLanguage", "evidenceSummary", "explanation" ],
+  "properties" : {
+    "categoryFound" : {
+      "title" : "categoryFound",
+      "description" : "True only when the document reasonably matches exactly one supplied category. False is a valid, expected outcome — never force the closest fit.",
+      "lightning:type" : "lightning__booleanType"
+    },
+    "categoryKey" : {
+      "title" : "categoryKey",
+      "description" : "The \"key\" of the selected category, copied exactly from the supplied list. Empty string when categoryFound is false.",
+      "lightning:type" : "lightning__textType"
+    },
+    "categoryLabel" : {
+      "title" : "categoryLabel",
+      "description" : "The \"label\" of the selected category, copied exactly from the supplied list. Empty string when categoryFound is false.",
+      "lightning:type" : "lightning__textType"
+    },
+    "confidenceScore" : {
+      "title" : "confidenceScore",
+      "description" : "0–100 strength of the classification evidence. 85–100 strong distinctive evidence; 60–84 reasonable match with some uncertainty; 0–59 weak or ambiguous. Score the evidence, not relative likelihood.",
+      "lightning:type" : "lightning__integerType"
+    },
+    "ambiguous" : {
+      "title" : "ambiguous",
+      "description" : "True when two or more supplied categories were plausible for this document, even if one was ultimately selected.",
+      "lightning:type" : "lightning__booleanType"
+    },
+    "documentReadable" : {
+      "title" : "documentReadable",
+      "description" : "False when the document could not be read or inspected well enough to attempt classification.",
+      "lightning:type" : "lightning__booleanType"
+    },
+    "containsMultipleDocuments" : {
+      "title" : "containsMultipleDocuments",
+      "description" : "True when the file appears to bundle several distinct documents (e.g. a combined scan). Classification then reflects the dominant document.",
+      "lightning:type" : "lightning__booleanType"
+    },
+    "detectedLanguage" : {
+      "title" : "detectedLanguage",
+      "description" : "Primary language of the document as an ISO 639-1 code (e.g. \"pl\", \"en\"). Empty string if undeterminable.",
+      "lightning:type" : "lightning__textType"
+    },
+    "evidenceSummary" : {
+      "title" : "evidenceSummary",
+      "description" : "Brief description of the observable document characteristics that drove the decision. Describe types of information present, never actual personal or sensitive values.",
+      "lightning:type" : "lightning__textType"
+    },
+    "explanation" : {
+      "title" : "explanation",
+      "description" : "Brief reasoning: why the selected category is the best match, or why no category could be reliably selected. No personal or sensitive values.",
+      "lightning:type" : "lightning__textType"
+    }
+  }
+}
