@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>66.0</apiVersion>
+    <apiVersion>67.0</apiVersion>
     <isExposed>true</isExposed>
     <masterLabel>Claim Document Organizer</masterLabel>
-    <description>Frontend-only mockup for uploading and categorizing motor claim documents.</description>
+    <description>Uploads and classifies insurance claim documents with a structured Prompt Builder response.</description>
     <targets>
         <target>lightning__AppPage</target>
         <target>lightning__HomePage</target>

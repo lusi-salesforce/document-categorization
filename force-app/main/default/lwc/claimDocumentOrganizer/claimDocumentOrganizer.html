@@ -66,7 +66,7 @@
 
                 <ul class="slds-m-top_large" aria-label="Required documents">
                     <template for:each={requiredDocuments} for:item="document">
-                        <li key={document.id} class="slds-item slds-p-vertical_small">
+                        <li key={document.key} class="slds-item slds-p-vertical_small">
                             <div class="slds-grid slds-grid_vertical-align-center">
                                 <lightning-icon
                                     icon-name={document.iconName}
@@ -83,15 +83,16 @@
 
                 <div class="slds-border_top slds-m-top_large slds-p-top_large" aria-live="polite">
                     <template lwc:if={isEmptyState}>
-                        <lightning-input
-                            type="file"
+                        <lightning-file-upload
                             label="Add requested documents"
+                            name="claimDocuments"
                             accept={acceptedFileTypes}
+                            record-id={recordId}
                             multiple
-                            onchange={handleFilesSelected}
-                        ></lightning-input>
+                            onuploadfinished={handleUploadFinished}
+                        ></lightning-file-upload>
                         <p class="slds-text-body_small slds-text-color_weak slds-m-top_small">
-                            PDF, JPG, PNG or HEIC · up to 10 MB each
+                            PDF, JPG, PNG or HEIC
                         </p>
                     </template>
 
@@ -103,12 +104,6 @@
                             ></lightning-spinner>
                             <div class="slds-text-align_center slds-p-top_xx-large">
                                 <h3 class="slds-text-heading_medium">Organizing your documents…</h3>
-                                <lightning-progress-bar
-                                    class="slds-m-top_large"
-                                    value="50"
-                                    size="large"
-                                    aria-label="Organizing documents"
-                                ></lightning-progress-bar>
                             </div>
                         </div>
                     </template>
@@ -228,13 +223,14 @@
                         </ul>
 
                         <div class="slds-m-top_x-large">
-                            <lightning-input
-                                type="file"
+                            <lightning-file-upload
                                 label="Add more requested documents"
+                                name="additionalClaimDocuments"
                                 accept={acceptedFileTypes}
+                                record-id={recordId}
                                 multiple
-                                onchange={handleFilesSelected}
-                            ></lightning-input>
+                                onuploadfinished={handleUploadFinished}
+                            ></lightning-file-upload>
                         </div>
 
                         <div class="slds-m-top_x-large">
