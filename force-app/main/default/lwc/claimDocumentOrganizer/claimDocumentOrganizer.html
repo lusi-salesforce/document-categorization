@@ -97,34 +97,20 @@
                     </template>
 
                     <template lwc:elseif={isProcessing}>
-                        <div class="slds-is-relative slds-p-vertical_xx-large">
-                            <lightning-spinner
-                                alternative-text="Organizing documents"
-                                size="medium"
-                            ></lightning-spinner>
-                            <div class="slds-text-align_center slds-p-top_xx-large">
+                        <div class="slds-p-vertical_xx-large">
+                            <div class="slds-is-relative slds-p-vertical_large">
+                                <lightning-spinner
+                                    alternative-text="Organizing documents"
+                                    size="medium"
+                                ></lightning-spinner>
+                            </div>
+                            <div class="slds-text-align_center slds-m-top_medium">
                                 <h3 class="slds-text-heading_medium">Organizing your documents…</h3>
                             </div>
                         </div>
                     </template>
 
                     <template lwc:else>
-                        <div class="slds-media slds-media_center">
-                            <div class="slds-media__figure">
-                                <lightning-icon
-                                    icon-name="utility:success"
-                                    size="small"
-                                    alternative-text="Documents organized"
-                                ></lightning-icon>
-                            </div>
-                            <div class="slds-media__body">
-                                <h3 class="slds-text-heading_small">Check the suggested categories</h3>
-                                <p class="slds-text-color_weak slds-m-top_xx-small">
-                                    Change anything that doesn’t look right before sending.
-                                </p>
-                            </div>
-                        </div>
-
                         <template lwc:if={showSubmissionConfirmation}>
                             <div
                                 class="slds-notify slds-notify_alert slds-alert_success slds-m-top_large"
@@ -181,39 +167,27 @@
                                                 ></lightning-button-icon>
                                             </div>
 
-                                            <p class="slds-text-title_caps slds-text-color_weak slds-m-top_large">
-                                                {file.categoryLabel}
-                                            </p>
-                                            <p class="slds-text-heading_small slds-m-top_xx-small">
-                                                {file.category}
-                                            </p>
-
-                                            <template lwc:if={file.needsReview}>
-                                                <div class="slds-m-top_small">
-                                                    <lightning-badge label="Please check"></lightning-badge>
-                                                    <lightning-helptext
-                                                        content="We’re not fully sure—please confirm or change this suggested category."
-                                                    ></lightning-helptext>
-                                                </div>
-                                            </template>
-
-                                            <div class="slds-m-top_medium">
-                                                <template lwc:if={file.isEditing}>
-                                                    <lightning-combobox
-                                                        label="Choose category"
-                                                        value={file.category}
-                                                        options={categoryOptions}
-                                                        data-id={file.id}
-                                                        onchange={handleCategoryChange}
-                                                    ></lightning-combobox>
+                                            <div class="slds-m-top_large">
+                                                <lightning-combobox
+                                                    label="Choose category"
+                                                    placeholder="Select a category"
+                                                    value={file.category}
+                                                    options={categoryOptions}
+                                                    data-id={file.id}
+                                                    onchange={handleCategoryChange}
+                                                ></lightning-combobox>
+                                                <template lwc:if={file.detectedAutomatically}>
+                                                    <p class="slds-text-body_small slds-text-color_weak slds-m-top_x-small">
+                                                        Detected automatically
+                                                    </p>
                                                 </template>
-                                                <template lwc:else>
-                                                    <lightning-button
-                                                        label="Change category"
-                                                        variant="base"
-                                                        data-id={file.id}
-                                                        onclick={handleEditCategory}
-                                                    ></lightning-button>
+                                                <template lwc:if={file.needsReview}>
+                                                    <div class="slds-m-top_small">
+                                                        <lightning-badge label="Please check"></lightning-badge>
+                                                        <lightning-helptext
+                                                            content="We’re not fully sure—please choose or confirm the category."
+                                                        ></lightning-helptext>
+                                                    </div>
                                                 </template>
                                             </div>
                                         </div>
@@ -224,7 +198,7 @@
 
                         <div class="slds-m-top_x-large">
                             <lightning-file-upload
-                                label="Add more requested documents"
+                                label="Add documents"
                                 name="additionalClaimDocuments"
                                 accept={acceptedFileTypes}
                                 record-id={recordId}
@@ -233,11 +207,8 @@
                             ></lightning-file-upload>
                         </div>
 
-                        <div class="slds-m-top_x-large">
-                            <lightning-badge label={fileCountLabel}></lightning-badge>
-                        </div>
                         <lightning-button
-                            class="slds-m-top_small"
+                            class="slds-m-top_x-large"
                             label="Send for review"
                             variant="brand"
                             icon-name="utility:forward"

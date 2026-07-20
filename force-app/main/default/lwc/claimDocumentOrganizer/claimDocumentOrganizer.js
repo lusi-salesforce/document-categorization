@@ -33,7 +33,6 @@ const EXPECTED_CATEGORIES = REQUIRED_DOCUMENTS.map(({key, label, description}) =
     description
 }));
 const CONFIDENT_CLASSIFICATION_SCORE = 85;
-const UNCLASSIFIED_LABEL = 'Not classified';
 
 export default class ClaimDocumentOrganizer extends LightningElement {
     @api recordId;
@@ -59,14 +58,8 @@ export default class ClaimDocumentOrganizer extends LightningElement {
     get displayFiles() {
         return this.files.map((file) => ({
             ...file,
-            categoryLabel: file.customerChanged ? 'Selected category' : 'Suggested category',
             fileDetailLabel: this.getExtension(file.name)
         }));
-    }
-
-    get fileCountLabel() {
-        const count = this.files.length;
-        return `${count} ${count === 1 ? 'item' : 'items'} added`;
     }
 
     async handleUploadFinished(event) {
@@ -89,7 +82,7 @@ export default class ClaimDocumentOrganizer extends LightningElement {
             })
         );
         const countUnclassifiedFiles = classifiedFiles.filter(
-            ({category}) => category === UNCLASSIFIED_LABEL
+            ({category}) => !category
         ).length;
 
         this.files = [...this.files, ...classifiedFiles];
@@ -131,18 +124,10 @@ export default class ClaimDocumentOrganizer extends LightningElement {
             id: file.documentId,
             name: file.name,
             iconName: this.getFileIcon(file.name),
-            category: classification.category || UNCLASSIFIED_LABEL,
+            category: classification.category || '',
             needsReview: classification.needsReview ?? true,
-            customerChanged: false,
-            isEditing: false
+            detectedAutomatically: Boolean(classification.category)
         };
-    }
-
-    handleEditCategory(event) {
-        const fileId = event.currentTarget.dataset.id;
-        this.files = this.files.map((file) =>
-            file.id === fileId ? {...file, isEditing: true} : file
-        );
     }
 
     handleCategoryChange(event) {
@@ -154,9 +139,8 @@ export default class ClaimDocumentOrganizer extends LightningElement {
                 ? {
                       ...file,
                       category,
-                      customerChanged: true,
                       needsReview: false,
-                      isEditing: false
+                      detectedAutomatically: false
                   }
                 : file
         );
