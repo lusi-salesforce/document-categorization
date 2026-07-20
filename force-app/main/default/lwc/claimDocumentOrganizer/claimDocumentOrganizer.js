@@ -107,13 +107,21 @@ export default class ClaimDocumentOrganizer extends LightningElement {
     }
 
     createFile(file, classification = {}) {
+        const category = classification.category || '';
+        const needsReview = classification.needsReview ?? true;
+
         return {
             id: file.documentId,
             name: file.name,
             iconName: this.getFileIcon(file.name),
-            category: classification.category || '',
-            needsReview: classification.needsReview ?? true,
-            detectedAutomatically: Boolean(classification.category),
+            category,
+            needsReview,
+            reviewMessage: needsReview
+                ? category
+                    ? 'We are not fully confident in this category. Please review and confirm it.'
+                    : 'We could not automatically determine the category. Please select one.'
+                : '',
+            detectedAutomatically: Boolean(category),
             isDeleting: false
         };
     }

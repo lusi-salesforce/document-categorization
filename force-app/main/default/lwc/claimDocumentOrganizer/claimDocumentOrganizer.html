@@ -183,12 +183,9 @@
                                                     </p>
                                                 </template>
                                                 <template lwc:if={file.needsReview}>
-                                                    <div class="slds-m-top_small">
-                                                        <lightning-badge label="Please check"></lightning-badge>
-                                                        <lightning-helptext
-                                                            content="We’re not fully sure—please choose or confirm the category."
-                                                        ></lightning-helptext>
-                                                    </div>
+                                                    <p class="slds-text-body_small slds-text-color_weak slds-m-top_small">
+                                                        {file.reviewMessage}
+                                                    </p>
                                                 </template>
                                             </div>
                                         </div>
@@ -216,21 +213,6 @@
                             icon-position="right"
                             onclick={handleSubmit}
                         ></lightning-button>
-
-                        <div class="slds-media slds-m-top_x-large">
-                            <div class="slds-media__figure">
-                                <lightning-icon
-                                    icon-name="utility:info"
-                                    size="x-small"
-                                    alternative-text="Information"
-                                ></lightning-icon>
-                            </div>
-                            <div class="slds-media__body">
-                                <p class="slds-text-body_small slds-text-color_weak">
-                                    Suggested categories help route your documents. A claims specialist makes the final assessment.
-                                </p>
-                            </div>
-                        </div>
                     </template>
                 </div>
             </section>
