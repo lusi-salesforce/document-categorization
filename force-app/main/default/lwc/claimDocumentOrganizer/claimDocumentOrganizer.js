@@ -82,23 +82,9 @@ export default class ClaimDocumentOrganizer extends LightningElement {
                 }
             })
         );
-        const countUnclassifiedFiles = classifiedFiles.filter(
-            ({category}) => !category
-        ).length;
 
         this.files = [...this.files, ...classifiedFiles];
         this.isProcessing = false;
-
-        if (countUnclassifiedFiles) {
-            Toast.show(
-                {
-                    label: 'Some documents need manual classification',
-                    message: `${countUnclassifiedFiles} ${countUnclassifiedFiles === 1 ? 'document could' : 'documents could'} not be classified.`,
-                    variant: 'warning'
-                },
-                this
-            );
-        }
     }
 
     async classifyUploadedFile(file) {
