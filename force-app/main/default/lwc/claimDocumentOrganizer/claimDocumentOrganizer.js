@@ -1,5 +1,6 @@
 import {api, LightningElement} from 'lwc';
 import Toast from 'lightning/toast';
+import {deleteRecord} from 'lightning/uiRecordApi';
 import classifyDocument from '@salesforce/apex/ClaimDocumentOrganizerController.classifyDocument';
 import claimIllustration from '@salesforce/resourceUrl/illustrationInsuranceClaim';
 
@@ -126,7 +127,8 @@ export default class ClaimDocumentOrganizer extends LightningElement {
             iconName: this.getFileIcon(file.name),
             category: classification.category || '',
             needsReview: classification.needsReview ?? true,
-            detectedAutomatically: Boolean(classification.category)
+            detectedAutomatically: Boolean(classification.category),
+            isDeleting: false
         };
     }
 
@@ -146,10 +148,29 @@ export default class ClaimDocumentOrganizer extends LightningElement {
         );
     }
 
-    handleRemove(event) {
+    async handleRemove(event) {
         const fileId = event.currentTarget.dataset.id;
-        this.files = this.files.filter((file) => file.id !== fileId);
-        this.showSubmissionConfirmation = false;
+        this.files = this.files.map((file) =>
+            file.id === fileId ? {...file, isDeleting: true} : file
+        );
+
+        try {
+            await deleteRecord(fileId);
+            this.files = this.files.filter((file) => file.id !== fileId);
+            this.showSubmissionConfirmation = false;
+        } catch {
+            this.files = this.files.map((file) =>
+                file.id === fileId ? {...file, isDeleting: false} : file
+            );
+            Toast.show(
+                {
+                    label: 'Document could not be removed',
+                    message: 'Try again or contact your administrator.',
+                    variant: 'error'
+                },
+                this
+            );
+        }
     }
 
     handleSubmit() {
