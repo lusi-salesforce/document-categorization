@@ -39,7 +39,6 @@ export default class ClaimDocumentOrganizer extends LightningElement {
     @api recordId;
 
     claimIllustrationUrl = claimIllustration;
-    requiredDocuments = REQUIRED_DOCUMENTS;
     files = [];
     isProcessing = false;
     showSubmissionConfirmation = false;
@@ -54,6 +53,31 @@ export default class ClaimDocumentOrganizer extends LightningElement {
 
     get categoryOptions() {
         return REQUIRED_DOCUMENTS.map(({label}) => ({label, value: label}));
+    }
+
+    get requiredDocuments() {
+        const providedCategories = new Set(
+            this.files.filter(({isDeleting}) => !isDeleting).map(({category}) => category)
+        );
+
+        return REQUIRED_DOCUMENTS.map((document) => {
+            const isSatisfied = providedCategories.has(document.label);
+
+            return {
+                ...document,
+                isSatisfied,
+                iconVariant: isSatisfied ? 'success' : undefined
+            };
+        });
+    }
+
+    get isSubmissionDisabled() {
+        return REQUIRED_DOCUMENTS.some(
+            ({label}) =>
+                !this.files.some(
+                    ({category, isDeleting}) => category === label && !isDeleting
+                )
+        );
     }
 
     get displayFiles() {
@@ -130,6 +154,7 @@ export default class ClaimDocumentOrganizer extends LightningElement {
         const fileId = event.currentTarget.dataset.id;
         const category = event.detail.value;
 
+        this.showSubmissionConfirmation = false;
         this.files = this.files.map((file) =>
             file.id === fileId
                 ? {
@@ -168,6 +193,10 @@ export default class ClaimDocumentOrganizer extends LightningElement {
     }
 
     handleSubmit() {
+        if (this.isSubmissionDisabled) {
+            return;
+        }
+
         this.showSubmissionConfirmation = true;
     }
 

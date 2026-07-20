@@ -71,11 +71,22 @@
                                 <lightning-icon
                                     icon-name={document.iconName}
                                     size="small"
+                                    variant={document.iconVariant}
                                     alternative-text={document.label}
                                 ></lightning-icon>
                                 <h3 class="slds-text-heading_small slds-m-left_small">
                                     {document.titleForCustomer}
                                 </h3>
+                                <template lwc:if={document.isSatisfied}>
+                                    <lightning-icon
+                                        class="slds-m-left_small"
+                                        icon-name="utility:success"
+                                        size="x-small"
+                                        variant="success"
+                                        alternative-text="Provided"
+                                        title="Provided"
+                                    ></lightning-icon>
+                                </template>
                             </div>
                         </li>
                     </template>
@@ -211,6 +222,7 @@
                             variant="brand"
                             icon-name="utility:forward"
                             icon-position="right"
+                            disabled={isSubmissionDisabled}
                             onclick={handleSubmit}
                         ></lightning-button>
                     </template>
