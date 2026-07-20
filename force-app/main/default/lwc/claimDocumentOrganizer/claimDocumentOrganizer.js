@@ -3,7 +3,6 @@ import Toast from 'lightning/toast';
 import classifyDocument from '@salesforce/apex/ClaimDocumentOrganizerController.classifyDocument';
 import claimIllustration from '@salesforce/resourceUrl/illustrationInsuranceClaim';
 
-const ACCEPTED_FILE_TYPES = ['.pdf', '.jpg', '.jpeg', '.png', '.heic'];
 const REQUIRED_DOCUMENTS = [
     {
         key: 'accident-statement',
@@ -40,7 +39,6 @@ export default class ClaimDocumentOrganizer extends LightningElement {
     @api recordId;
 
     claimIllustrationUrl = claimIllustration;
-    acceptedFileTypes = ACCEPTED_FILE_TYPES;
     requiredDocuments = REQUIRED_DOCUMENTS;
     files = [];
     isProcessing = false;
@@ -48,6 +46,10 @@ export default class ClaimDocumentOrganizer extends LightningElement {
 
     get isEmptyState() {
         return !this.isProcessing && this.files.length === 0;
+    }
+
+    get acceptedFileTypes() {
+        return ['.pdf', '.jpg', '.jpeg', '.png', '.heic'];
     }
 
     get categoryOptions() {
