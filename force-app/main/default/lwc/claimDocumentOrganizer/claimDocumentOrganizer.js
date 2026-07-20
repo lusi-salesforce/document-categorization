@@ -80,13 +80,6 @@ export default class ClaimDocumentOrganizer extends LightningElement {
         );
     }
 
-    get displayFiles() {
-        return this.files.map((file) => ({
-            ...file,
-            fileDetailLabel: this.getExtension(file.name)
-        }));
-    }
-
     async handleUploadFinished(event) {
         const uploadedFiles = event.detail.files;
 
@@ -206,9 +199,5 @@ export default class ClaimDocumentOrganizer extends LightningElement {
 
     getFileIcon(fileName) {
         return /\.(jpe?g|png|heic)$/i.test(fileName) ? 'doctype:image' : 'doctype:pdf';
-    }
-
-    getExtension(fileName) {
-        return fileName.includes('.') ? fileName.split('.').pop().toUpperCase() : 'FILE';
     }
 }

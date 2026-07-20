@@ -148,7 +148,7 @@
                         </template>
 
                         <ul class="slds-has-dividers_bottom-space slds-m-top_large" aria-label="Added documents">
-                            <template for:each={displayFiles} for:item="file">
+                            <template for:each={files} for:item="file">
                                 <li key={file.id} class="slds-item slds-p-vertical_large">
                                     <article class="slds-media">
                                         <div class="slds-media__figure">
@@ -164,9 +164,6 @@
                                                     <h4 class="slds-text-heading_small slds-truncate" title={file.name}>
                                                         {file.name}
                                                     </h4>
-                                                    <p class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">
-                                                        {file.fileDetailLabel}
-                                                    </p>
                                                 </div>
                                                 <lightning-button-icon
                                                     class="slds-m-left_small"
