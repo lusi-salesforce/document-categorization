@@ -88,18 +88,18 @@ export default class ClaimDocumentOrganizer extends LightningElement {
                 }
             })
         );
-        const failedCount = classifiedFiles.filter(
+        const countUnclassifiedFiles = classifiedFiles.filter(
             ({category}) => category === UNCLASSIFIED_LABEL
         ).length;
 
         this.files = [...this.files, ...classifiedFiles];
         this.isProcessing = false;
 
-        if (failedCount) {
+        if (countUnclassifiedFiles) {
             Toast.show(
                 {
                     label: 'Some documents need manual classification',
-                    message: `${failedCount} ${failedCount === 1 ? 'document could' : 'documents could'} not be classified.`,
+                    message: `${countUnclassifiedFiles} ${countUnclassifiedFiles === 1 ? 'document could' : 'documents could'} not be classified.`,
                     variant: 'warning'
                 },
                 this
@@ -112,22 +112,18 @@ export default class ClaimDocumentOrganizer extends LightningElement {
             contentDocumentId: file.documentId,
             expectedCategories: EXPECTED_CATEGORIES
         });
-        const matchedCategory = REQUIRED_DOCUMENTS.find(
-            ({key, label}) =>
-                classification.categoryFound &&
-                classification.categoryKey === key &&
-                classification.categoryLabel === label
+        const matchedCategory = REQUIRED_DOCUMENTS.find(({key}) =>
+            classification.categoryFound && classification.categoryKey === key
         );
 
-        return this.createFile(file, {
-            category: matchedCategory?.label,
-            needsReview:
-                !matchedCategory ||
-                !classification.documentReadable ||
-                classification.ambiguous ||
-                classification.containsMultipleDocuments ||
-                classification.confidenceScore < CONFIDENT_CLASSIFICATION_SCORE
-        });
+        const needsReview =
+            !matchedCategory ||
+            !classification.documentReadable ||
+            classification.ambiguous ||
+            classification.containsMultipleDocuments ||
+            classification.confidenceScore < CONFIDENT_CLASSIFICATION_SCORE;
+
+        return this.createFile(file, {category: matchedCategory?.label, needsReview});
     }
 
     createFile(file, classification = {}) {
